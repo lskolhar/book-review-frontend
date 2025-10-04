@@ -21,11 +21,12 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
+          console.log('Checking user authentication with token:', token.substring(0, 20) + '...');
           const response = await authAPI.getMe();
           setUser(response.data.user);
           setToken(token);
         } catch (error) {
-          console.error('Auth initialization failed:', error);
+          console.error('Auth initialization failed:', error.response?.data || error.message);
           localStorage.removeItem('token');
           localStorage.removeItem('user');
         }
@@ -38,6 +39,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
+      console.log('Attempting login with credentials:', { email: credentials.email });
       const response = await authAPI.login(credentials);
       const { token, user } = response.data;
       
@@ -47,8 +49,10 @@ export const AuthProvider = ({ children }) => {
       setToken(token);
       setUser(user);
       
+      console.log('Login successful');
       return { success: true };
     } catch (error) {
+      console.error('Login error:', error.response?.data || error.message);
       return {
         success: false,
         message: error.response?.data?.message || 'Login failed'
@@ -58,6 +62,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
+      console.log('Attempting registration with data:', { name: userData.name, email: userData.email });
       const response = await authAPI.register(userData);
       const { token, user } = response.data;
       
@@ -67,8 +72,10 @@ export const AuthProvider = ({ children }) => {
       setToken(token);
       setUser(user);
       
+      console.log('Registration successful');
       return { success: true };
     } catch (error) {
+      console.error('Registration error:', error.response?.data || error.message);
       return {
         success: false,
         message: error.response?.data?.message || 'Registration failed'
