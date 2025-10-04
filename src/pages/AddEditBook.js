@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { booksAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -29,9 +29,9 @@ const AddEditBook = () => {
     if (isEdit) {
       fetchBookData();
     }
-  }, [id, isAuthenticated, navigate]);
+  }, [id, isAuthenticated, navigate, isEdit, fetchBookData]);
 
-  const fetchBookData = async () => {
+  const fetchBookData = useCallback(async () => {
     setPageLoading(true);
     try {
       const response = await booksAPI.getBookById(id);
@@ -49,7 +49,7 @@ const AddEditBook = () => {
     } finally {
       setPageLoading(false);
     }
-  };
+  }, [id, navigate]);
 
   const handleChange = (e) => {
     setFormData({

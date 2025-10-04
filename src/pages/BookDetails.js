@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { booksAPI, reviewsAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -18,7 +18,7 @@ const BookDetails = () => {
   const [loading, setLoading] = useState(true);
   const [reviewLoading, setReviewLoading] = useState(false);
 
-  const fetchBookDetails = async () => {
+  const fetchBookDetails = useCallback(async () => {
     try {
       const response = await booksAPI.getBookById(id);
       setBook(response.data.book);
@@ -26,16 +26,16 @@ const BookDetails = () => {
       console.error('Error fetching book:', error);
       navigate('/');
     }
-  };
+  }, [id, navigate]);
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       const response = await reviewsAPI.getBookReviews(id);
       setReviews(response.data.reviews);
     } catch (error) {
       console.error('Error fetching reviews:', error);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,7 +44,7 @@ const BookDetails = () => {
       setLoading(false);
     };
     fetchData();
-  }, [id]);
+  }, [id, fetchBookDetails, fetchReviews]);
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();

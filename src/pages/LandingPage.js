@@ -24,7 +24,7 @@ const LandingPage = () => {
             </div>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Book Review</h1>
-          <p className="text-gray-600">Welcome to our review bookplatform</p>
+          <p className="text-gray-600">Welcome to our book review platform</p>
         </div>
 
         {/* Login Credentials Info */}
@@ -33,11 +33,11 @@ const LandingPage = () => {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-600">Email:</span>
-              <span className="font-mono text-blue-800">demo@example.com</span>
+              <span className="font-mono text-blue-800">abcd@gmail.com</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Password:</span>
-              <span className="font-mono text-blue-800">password123</span>
+              <span className="font-mono text-blue-800">12345678</span>
             </div>
             <p className="text-xs text-gray-500 mt-2">
               Or create a new account using the register button below

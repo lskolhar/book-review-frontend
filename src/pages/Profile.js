@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { booksAPI, reviewsAPI } from '../services/api';
@@ -19,9 +19,9 @@ const Profile = () => {
     }
 
     fetchUserData();
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, fetchUserData]);
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
       // Fetch user's books (we'll need to add this endpoint to the backend)
       const booksResponse = await booksAPI.getBooks(); // This needs filtering by user
@@ -38,7 +38,7 @@ const Profile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user._id]);
 
   const handleDeleteBook = async (bookId) => {
     if (!window.confirm('Are you sure you want to delete this book?')) return;
