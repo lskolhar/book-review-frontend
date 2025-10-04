@@ -24,7 +24,7 @@ const LandingPage = () => {
             </div>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Book Review</h1>
-          <p className="text-gray-600">Welcome to our book review platform</p>
+          <p className="text-gray-600">Welcome to our review bookplatform</p>
         </div>
 
         {/* Login Credentials Info */}
