@@ -9,7 +9,6 @@ import AddEditBook from './pages/AddEditBook';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
-import './App.css';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
