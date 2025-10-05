@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { booksAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -9,6 +9,7 @@ const BooksList = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
+  const [searchInput, setSearchInput] = useState('');
   const [filters, setFilters] = useState({
     search: '',
     genre: '',
@@ -16,7 +17,7 @@ const BooksList = () => {
     sortOrder: 'desc'
   });
 
-  const fetchBooks = async (page = 1) => {
+  const fetchBooks = useCallback(async (page = 1) => {
     setLoading(true);
     try {
       const params = {
@@ -31,11 +32,11 @@ const BooksList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
   useEffect(() => {
     fetchBooks();
-  }, [filters]);
+  }, [fetchBooks]);
 
   const handleFilterChange = (key, value) => {
     if (key === 'sortBy') {
@@ -59,7 +60,42 @@ const BooksList = () => {
   };
 
   const handleSearch = () => {
-    fetchBooks(1);
+    setFilters(prev => ({
+      ...prev,
+      search: searchInput.trim()
+    }));
+  };
+
+  const handleSearchInputChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput('');
+    setFilters(prev => ({
+      ...prev,
+      search: ''
+    }));
+  };
+
+  // Function to highlight search terms in text
+  const highlightText = (text, searchTerm) => {
+    if (!searchTerm || !text) return text;
+    
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    const parts = text.split(regex);
+    
+    return parts.map((part, index) => 
+      regex.test(part) ? (
+        <span 
+          key={index} 
+          className="bg-blue-200 px-1 rounded"
+          style={{ backgroundColor: '#dbeafe', padding: '0 4px', borderRadius: '4px' }}
+        >
+          {part}
+        </span>
+      ) : part
+    );
   };
 
   const handleNextPage = () => {
@@ -115,8 +151,8 @@ const BooksList = () => {
             <input
               type="text"
               placeholder="Search books by title, author, or description..."
-              value={filters.search}
-              onChange={(e) => handleFilterChange('search', e.target.value)}
+              value={searchInput}
+              onChange={handleSearchInputChange}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 bg-white relative z-0"
               style={{ paddingLeft: '3rem' }}
@@ -164,12 +200,22 @@ const BooksList = () => {
             </select>
 
             {/* Search Button */}
-            <button
-              onClick={handleSearch}
-              className="w-full bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-medium"
-            >
-              Search Books
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleSearch}
+                className="flex-1 bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-medium"
+              >
+                {filters.search ? 'Search Again' : 'Search Books'}
+              </button>
+              {filters.search && (
+                <button
+                  onClick={handleClearSearch}
+                  className="px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-medium"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -185,16 +231,16 @@ const BooksList = () => {
               {/* Book Title and Author */}
               <div className="mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                  {book.title}
+                  {highlightText(book.title, filters.search)}
                 </h3>
                 <p className="text-gray-600 text-sm">
-                  by <span className="font-medium text-gray-800">{book.author}</span>
+                  by <span className="font-medium text-gray-800">{highlightText(book.author, filters.search)}</span>
                 </p>
               </div>
 
               {/* Description */}
               <p className="text-sm text-gray-500 mb-4 line-clamp-3 leading-relaxed">
-                {book.description.substring(0, 120)}...
+                {highlightText(book.description.substring(0, 120), filters.search)}...
               </p>
               
               {/* Genre and Year */}
