@@ -38,10 +38,24 @@ const BooksList = () => {
   }, [filters]);
 
   const handleFilterChange = (key, value) => {
-    setFilters({
-      ...filters,
-      [key]: value
-    });
+    if (key === 'sortBy') {
+      // Set appropriate sort order based on sort field
+      let sortOrder = 'desc'; // default for createdAt only
+      if (value === 'title' || value === 'author' || value === 'year') {
+        sortOrder = 'asc'; // A-Z for title and author, oldest to newest for year
+      }
+      
+      setFilters({
+        ...filters,
+        [key]: value,
+        sortOrder: sortOrder
+      });
+    } else {
+      setFilters({
+        ...filters,
+        [key]: value
+      });
+    }
   };
 
   const handleSearch = () => {
@@ -120,9 +134,7 @@ const BooksList = () => {
                 className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 relative z-0"
                 style={{ paddingLeft: '2.5rem' }}
               >
-                <option value="">All Genres</option>
-                <option value="Fiction">Fiction</option>
-                <option value="Non-Fiction">Non-Fiction</option>
+                <option value="">All Genres</option>              
                 <option value="Science Fiction">Science Fiction</option>
                 <option value="Mystery">Mystery</option>
                 <option value="Romance">Romance</option>
@@ -130,6 +142,12 @@ const BooksList = () => {
                 <option value="Biography">Biography</option>
                 <option value="History">History</option>
                 <option value="Self-Help">Self-Help</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Horror">Horror</option>
+                <option value="Poetry">Poetry</option>
+                <option value="Drama">Drama</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Comedy">Comedy</option>
               </select>
             </div>
 
