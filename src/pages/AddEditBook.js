@@ -20,17 +20,6 @@ const AddEditBook = () => {
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
-
-    if (isEdit) {
-      fetchBookData();
-    }
-  }, [id, isAuthenticated, navigate, isEdit, fetchBookData]);
-
   const fetchBookData = useCallback(async () => {
     setPageLoading(true);
     try {
@@ -50,6 +39,17 @@ const AddEditBook = () => {
       setPageLoading(false);
     }
   }, [id, navigate]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    if (isEdit) {
+      fetchBookData();
+    }
+  }, [id, isAuthenticated, navigate, isEdit, fetchBookData]);
 
   const handleChange = (e) => {
     setFormData({
